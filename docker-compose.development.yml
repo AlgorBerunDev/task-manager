@@ -1,0 +1,27 @@
+version: "3"
+
+# Bu yerda barcha servislarimiz bo'ladi
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    command: npm run dev
+    volumes:
+      - ./api/src:/usr/src/app/src
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: npm run start
+    environment:
+      - WDS_SOCKET_PORT=0
+    stdin_open: true # added for react start correctly working
+    tty: true # added for react start correctly working
+    volumes:
+      - ./frontend/src:/usr/src/app/src
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/conf.d/nginx.conf

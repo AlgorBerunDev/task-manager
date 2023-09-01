@@ -1,0 +1,22 @@
+# all versions in hub.docker.com
+# node:<version>
+# node:<version>-alpine
+# node:<version>-slim
+FROM node:14-alpine
+
+# Create workdir (this is root directory)
+WORKDIR /usr/src/app
+
+# Copy source files to workdir (/usr/src/app) 
+COPY package*.json ./
+
+RUN npm install
+
+# why didn't we copy the full code in the first COPY "COPY package*.json ./"?
+# Because in .dockerignore indicated that it is not necessary to copy node_modules
+COPY . .
+
+# Opening port for outworld
+# EXPOSE 3000
+
+# CMD ["node", "npm run start"]

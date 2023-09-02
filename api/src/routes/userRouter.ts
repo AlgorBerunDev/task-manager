@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { isAuthenticated, hasRole } from "../middleware/auth";
-import { User } from "../models/User";
+import { isAuthenticated, hasRole } from "../middleware/authMiddleware";
+import { User } from "../models/user";
 
 const router = Router();
 

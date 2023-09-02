@@ -1,9 +1,9 @@
 // src/middleware/auth.ts
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { IUser, User } from "../models/User";
+import { IUser, User } from "../models/user";
 
-interface IRequestWithUser extends Request {
+export interface IRequestWithUser extends Request {
   user?: IUser;
 }
 
@@ -23,10 +23,26 @@ export const isAuthenticated = async (req: IRequestWithUser, res: Response, next
   }
 };
 
-export const hasRole = (role: string) => {
-  return (req: IRequestWithUser, res: Response, next: NextFunction) => {
-    if (req.user?.role !== role) return res.status(403).send("Forbidden.");
-    next();
+export const hasRole = (roleName: String) => {
+  return async (req: IRequestWithUser, res: Response, next: NextFunction) => {
+    const userId = req.user?._id;
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const role = user.roles.find(roleItem => roleItem === roleName);
+      if (!role) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Error checking user roles:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   };
 };
 

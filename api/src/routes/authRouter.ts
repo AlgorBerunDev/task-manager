@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
-import { IUser, User } from "../models/User";
-import { generateToken } from "../middleware/auth";
+import { IUser, User, roleList } from "../models/user";
+import { generateToken } from "../middleware/authMiddleware";
 import { handleValidationErrors } from "../utils/errorHandler";
 
 const router = Router();
@@ -11,23 +11,30 @@ router.post(
   [
     body("username").notEmpty().withMessage("Username is required"),
     body("password").notEmpty().withMessage("Password is required"),
-    body("role").isIn(["admin", "employer"]).withMessage("Invalid role"),
+    body("roles")
+      .isArray({ min: 1 })
+      .withMessage("At least one role is required")
+      .custom((roles: String[]) => {
+        return roles.every(role => roleList.includes(role));
+      })
+      .withMessage("Invalid roles provided"),
   ],
   handleValidationErrors,
   async (req: Request, res: Response) => {
-    const { username, password, role } = req.body;
+    const { username, password, roles } = req.body;
 
     let user: IUser | null;
     try {
       user = await User.findOne({ username });
       if (user) return res.status(400).send("User already exists.");
 
-      user = new User({ username, password, role });
+      user = new User({ username, password, roles });
       await user.save();
 
       const token = generateToken(user);
       res.header("Authorization", `Bearer ${token}`).send({ user, token });
     } catch (err) {
+      console.error(err);
       res.status(500).send("Error registering user");
     }
   }
@@ -51,6 +58,7 @@ router.post(
       if (!isMatch) return res.status(400).send("Invalid username or password.");
 
       const token = generateToken(user);
+
       res.header("Authorization", `Bearer ${token}`).send({ user, token });
     } catch (err) {
       res.status(500).send("Error logging in");

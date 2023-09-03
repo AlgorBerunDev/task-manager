@@ -1,6 +1,5 @@
 version: "3"
 
-# Bu yerda barcha servislarimiz bo'ladi
 services:
   frontend:
     build:
@@ -10,17 +9,18 @@ services:
     command: serve -s build -l 3000
     restart: unless-stopped
     networks:
-      - mohirdev-docker-network # Connect frontend service to the mohirdev-docker-network
+      - mohirdev-docker-network
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile.prod
     container_name: mohirdev-docker-api
-    command: npm run start # We need this command to run the server inside the container
+    command: npm run start
+    volumes:
+      - "./api:/usr/src/app"
+      - "node_modules:/usr/src/app/node_modules"
     restart: unless-stopped
-    # ports:
-    #   - "3001:3001" # "out_port:in_port"
     environment:
       - PORT=3001
       - HOST=http://localhost:3001
@@ -29,17 +29,17 @@ services:
     depends_on:
       - api_db
     networks:
-      - mohirdev-docker-network # Connect api service to the mohirdev-docker-network
+      - mohirdev-docker-network
 
   api_db:
     image: mongo:latest
     container_name: mohirdev-docker-api-db
-    volumes: # https://docs.docker.com/storage/volumes/ Volumes, нам нужно, чтобы необходимые файлы сохранялись по указанным путям, это обеспечит персистентность данных
-      - mohirdev_mongodb_api:/data/db # Этот volume добавлен чтобы чтобы после запуска docker контайнеров сохранилось данные
-    # ports:
-    #   - "27017:27017"
+    volumes:
+      - mohirdev_mongodb_api:/data/db
+    ports:
+      - "27017:27017"
     networks:
-      - mohirdev-docker-network # Connect api_db service to the mohirdev-docker-network
+      - mohirdev-docker-network
 
   nginx:
     image: nginx:stable-alpine
@@ -52,11 +52,11 @@ services:
       - frontend
       - api
     networks:
-      - mohirdev-docker-network # Connect nginx service to the mohirdev-docker-network
+      - mohirdev-docker-network
 
 volumes:
-  mongodb_api: # This volumes is added so that this volume is used between services
-
+  mohirdev_mongodb_api:
+  node_modules:
 networks:
-  mohirdev-docker-network: # Create new network with name mohirdev-docker-network
+  mohirdev-docker-network:
     driver: bridge

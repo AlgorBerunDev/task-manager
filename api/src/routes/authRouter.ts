@@ -1,8 +1,9 @@
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
-import { IUser, User, roleList } from "../models/user";
+import { IUser, Role, User } from "../models/user";
 import { generateToken } from "../middleware/authMiddleware";
 import { handleValidationErrors } from "../utils/errorHandler";
+import { userSerializer } from "../serializers/userSerializer";
 
 const router = Router();
 
@@ -14,8 +15,10 @@ router.post(
     body("roles")
       .isArray({ min: 1 })
       .withMessage("At least one role is required")
-      .custom((roles: String[]) => {
-        return roles.every(role => roleList.includes(role));
+      .custom((roles: string[]) => {
+        return roles.every((role: string) => {
+          return Object.values(Role as any).includes(role);
+        });
       })
       .withMessage("Invalid roles provided"),
   ],
@@ -32,7 +35,7 @@ router.post(
       await user.save();
 
       const token = generateToken(user);
-      res.header("Authorization", `Bearer ${token}`).send({ user, token });
+      res.header("Authorization", `Bearer ${token}`).send({ user: userSerializer(user), token });
     } catch (err) {
       console.error(err);
       res.status(500).send("Error registering user");
@@ -59,7 +62,7 @@ router.post(
 
       const token = generateToken(user);
 
-      res.header("Authorization", `Bearer ${token}`).send({ user, token });
+      res.header("Authorization", `Bearer ${token}`).send({ user: userSerializer(user), token });
     } catch (err) {
       res.status(500).send("Error logging in");
     }

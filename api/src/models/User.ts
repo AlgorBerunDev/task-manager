@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
-export const ROLE = {
-  ADMIN: "admin",
-  EMPLOYEE: "employee",
-};
 
-export const roleList: String[] = Object.values(ROLE);
+export enum Role {
+  Admin = "admin",
+  Employee = "employee",
+}
+
+export type UserRole = keyof typeof Role;
 
 export interface IUser extends Document {
   username: string;

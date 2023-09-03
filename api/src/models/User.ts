@@ -11,7 +11,7 @@ export type UserRole = keyof typeof Role;
 export interface IUser extends Document {
   username: string;
   password: string;
-  roles: String[];
+  roles: string[];
   comparePassword(password: string): Promise<boolean>;
 }
 

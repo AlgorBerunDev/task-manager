@@ -1,67 +1,80 @@
 import { Response } from "express";
 import { IRequestWithUser } from "../middleware/authMiddleware";
-import taskService from "../services/taskService";
+import taskService, { SortDirection, TaskFilter } from "../services/taskService";
 import userService from "../services/userService";
 import { ITask } from "../models/task";
 
-// Implement your controller methods using the services, e.g.:
-export const getAllTasks = async (req: IRequestWithUser, res: Response) => {
-  try {
-    const tasks = await taskService.getTasksByUser(req.user?.id);
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
+export default {
+  getAllTasks: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const sortBy = (req.query.sortBy || "_id") as string;
+      const orderBy = (req.query.orderBy || "ASC") as string;
+      const filter: TaskFilter = {
+        status: req.query.status as string | undefined,
+        priority: req.query.priority as string | undefined,
+        assignedTo: req.query.assignedTo as string | undefined,
+      };
+      const search = req.query.search ? String(req.query.search) : "";
 
-export const getTaskById = async (req: IRequestWithUser, res: Response) => {
-  try {
-    const task = await taskService.getTaskById(req.params.id);
-
-    if (!task) {
-      res.status(404).json({ message: "Task not found" });
-      return;
+      const tasks = await taskService.getTasksByUser(userId, page, limit, sortBy, orderBy, filter, search);
+      res.json(tasks);
+    } catch (error) {
+      res.status(500).json({ error });
     }
-    res.json(task);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
+  },
 
-export const createTask = async (req: IRequestWithUser, res: Response) => {
-  try {
-    const userId = req.user?.id;
-    const taskData = { ...req.body, createdBy: userId };
-    const task = await taskService.createTask(taskData);
-    res.status(201).json(task);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating task", error });
-  }
-};
+  getTaskById: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const task = await taskService.getTaskById(req.params.id);
 
-export const updateTask = async (req: IRequestWithUser, res: Response) => {
-  try {
-    const task: ITask | null = await taskService.updateTask(req.params.id, req.body);
-
-    if (!task) {
-      res.status(404).json({ message: "Task not found" });
-      return;
+      if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+      res.json(task);
+    } catch (error) {
+      res.status(500).json({ error });
     }
-    res.json(task);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
+  },
 
-export const deleteTask = async (req: IRequestWithUser, res: Response) => {
-  try {
-    const task = await taskService.deleteTask(req.params.id);
-    if (!task) {
-      res.status(404).json({ message: "Task not found" });
-      return;
+  createTask: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      const taskData = { ...req.body, createdBy: userId };
+      const task = await taskService.createTask(taskData);
+      res.status(201).json(task);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating task", error });
     }
-    res.json({ message: "Task deleted" });
-  } catch (error) {
-    res.status(500).json({ error });
-  }
+  },
+
+  updateTask: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const task: ITask | null = await taskService.updateTask(req.params.id, req.body);
+
+      if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+      res.json(task);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  deleteTask: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const task = await taskService.deleteTask(req.params.id);
+      if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+      res.json({ message: "Task deleted" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
 };

@@ -3,6 +3,7 @@ import { IRequestWithUser } from "../middleware/authMiddleware";
 import taskService, { SortDirection, TaskFilter } from "../services/taskService";
 import userService from "../services/userService";
 import { ITask } from "../models/task";
+import { taskSerializer, tasksSerializer } from "../serializers/taskSerializer";
 
 export default {
   getAllTasks: async (req: IRequestWithUser, res: Response) => {
@@ -18,7 +19,7 @@ export default {
       const search = req.query.search ? String(req.query.search) : "";
 
       const tasks = await taskService.getTasksByUser(userId, page, limit, sortBy, orderBy, filter, search);
-      res.json(tasks);
+      res.json(tasksSerializer(tasks));
     } catch (error) {
       res.status(500).json({ error });
     }
@@ -32,7 +33,7 @@ export default {
         res.status(404).json({ message: "Task not found" });
         return;
       }
-      res.json(task);
+      res.json(taskSerializer(task));
     } catch (error) {
       res.status(500).json({ error });
     }
@@ -43,7 +44,7 @@ export default {
       const userId = req.user?.id;
       const taskData = { ...req.body, createdBy: userId };
       const task = await taskService.createTask(taskData);
-      res.status(201).json(task);
+      res.status(201).json(taskSerializer(task));
     } catch (error) {
       res.status(500).json({ message: "Error creating task", error });
     }
@@ -57,7 +58,7 @@ export default {
         res.status(404).json({ message: "Task not found" });
         return;
       }
-      res.json(task);
+      res.json(taskSerializer(task));
     } catch (error) {
       res.status(500).json({ error });
     }

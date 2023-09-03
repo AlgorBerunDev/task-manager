@@ -3,8 +3,6 @@ import userService from "./userService";
 
 export interface TaskFilter {
   status?: string;
-  priority?: string;
-  assignedTo?: string;
 }
 
 export enum SortDirection {

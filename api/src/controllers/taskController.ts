@@ -14,8 +14,6 @@ export default {
       const orderBy = (req.query.orderBy || "ASC") as string;
       const filter: TaskFilter = {
         status: req.query.status as string | undefined,
-        priority: req.query.priority as string | undefined,
-        assignedTo: req.query.assignedTo as string | undefined,
       };
       const search = req.query.search ? String(req.query.search) : "";
 

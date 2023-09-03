@@ -5,7 +5,6 @@ export interface ITask extends Document {
   description: string;
   status: string;
   createdBy: string;
-  id: string;
 }
 
 const TaskSchema: Schema = new Schema({
@@ -13,7 +12,6 @@ const TaskSchema: Schema = new Schema({
   description: { type: String, required: true },
   status: { type: String, required: true, default: "pending" },
   createdBy: { type: String, required: true },
-  id: { type: String },
 });
 
 export default mongoose.model<ITask>("Task", TaskSchema);

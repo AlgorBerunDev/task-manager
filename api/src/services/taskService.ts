@@ -1,7 +1,5 @@
-import { SaveOptions } from "mongoose";
 import Task, { ITask } from "../models/task";
-import { diffInDays } from "../utils/date/diffInDays";
-import { TimePeriod, TimePeriodValue, getFormatDateByTimePeriod } from "../utils/date/timePeriod";
+import { TimePeriodValue, getFormatDateByTimePeriod } from "../utils/date/timePeriod";
 import userService from "./userService";
 
 export interface TaskFilter {

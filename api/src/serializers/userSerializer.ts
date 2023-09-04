@@ -4,6 +4,8 @@ interface SerializedUser {
   id: string;
   username: string;
   roles: String[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const userSerializer = (user: IUser): SerializedUser => {
@@ -11,6 +13,8 @@ export const userSerializer = (user: IUser): SerializedUser => {
     id: user._id.toString(),
     username: user.username,
     roles: user.roles,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 };
 

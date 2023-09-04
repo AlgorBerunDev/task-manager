@@ -8,6 +8,7 @@ const router = Router();
 router.get("/", isAuthenticated, hasRole("admin"), async (_req, res) => {
   try {
     const users = await User.find();
+
     res.send(usersSerializer(users));
   } catch (err) {
     res.status(500).send("Error retrieving users");

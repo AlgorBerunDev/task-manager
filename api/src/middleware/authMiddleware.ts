@@ -23,7 +23,7 @@ export const isAuthenticated = async (req: IRequestWithUser, res: Response, next
   }
 };
 
-export const hasRole = (roleName: String) => {
+export const hasRole = (...roleNames: string[]) => {
   return async (req: IRequestWithUser, res: Response, next: NextFunction) => {
     const userId = req.user?._id;
 
@@ -33,7 +33,7 @@ export const hasRole = (roleName: String) => {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const role = user.roles.find(roleItem => roleItem === roleName);
+      const role = user.roles.find(roleItem => roleNames.includes(roleItem));
       if (!role) {
         return res.status(403).json({ message: "Forbidden" });
       }

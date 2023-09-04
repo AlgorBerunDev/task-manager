@@ -11,15 +11,20 @@ export type UserRole = keyof typeof Role;
 export interface IUser extends Document {
   username: string;
   password: string;
-  roles: String[];
+  roles: string[];
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword(password: string): Promise<boolean>;
 }
 
-const UserSchema: Schema = new Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  roles: { type: [String], required: true },
-});
+const UserSchema: Schema = new Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    roles: { type: [String], required: true },
+  },
+  { timestamps: true }
+);
 
 UserSchema.pre<IUser>("save", async function (next) {
   const salt = await bcrypt.genSalt(10);

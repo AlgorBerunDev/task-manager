@@ -12,16 +12,25 @@ const Sidebar = ({ user }) => {
 
   return (
     <MenuPadding>
-      <Menu mode="inline" theme="light" selectedKeys={[location.pathname]}>
-        <Menu.Item key="/tasks">
-          <Link to="/tasks">Tasks List</Link>
-        </Menu.Item>
-        {hasRole(user, ["admin"]) && (
-          <Menu.Item key="/users">
-            <Link to="/users">Users</Link>
-          </Menu.Item>
-        )}
-      </Menu>
+      <Menu
+        mode="inline"
+        theme="light"
+        selectedKeys={[location.pathname]}
+        items={[
+          {
+            key: "/tasks",
+            title: <Link to="/tasks">Tasks List</Link>,
+          },
+          ...(hasRole(user, ["admin"])
+            ? [
+                {
+                  key: "/users",
+                  title: <Link to="/users">Users</Link>,
+                },
+              ]
+            : []),
+        ]}
+      />
     </MenuPadding>
   );
 };

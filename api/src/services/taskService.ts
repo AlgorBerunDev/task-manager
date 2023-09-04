@@ -78,7 +78,7 @@ export default {
         },
       },
     ]);
-    console.log("Task count:", t.length);
+
     const result = await Task.aggregate([
       {
         $match: {

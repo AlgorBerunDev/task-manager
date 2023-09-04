@@ -1,4 +1,7 @@
+import { SaveOptions } from "mongoose";
 import Task, { ITask } from "../models/task";
+import { diffInDays } from "../utils/date/diffInDays";
+import { TimePeriod, TimePeriodValue, getFormatDateByTimePeriod } from "../utils/date/timePeriod";
 import userService from "./userService";
 
 export interface TaskFilter {
@@ -8,6 +11,13 @@ export interface TaskFilter {
 export enum SortDirection {
   ASC = 1,
   DESC = -1,
+}
+
+interface ICompletedTaskMetricsFilter {
+  userIds: string[];
+  startDate: Date;
+  endDate: Date;
+  timePeriod: TimePeriodValue;
 }
 
 export default {
@@ -59,5 +69,72 @@ export default {
 
   async deleteTask(taskId: string): Promise<ITask | null> {
     return await Task.findByIdAndDelete(taskId);
+  },
+
+  async completedTaskMetrics({ userIds, startDate, endDate, timePeriod }: ICompletedTaskMetricsFilter) {
+    const format = getFormatDateByTimePeriod(timePeriod);
+    let t = await Task.aggregate([
+      {
+        $match: {
+          completedAt: { $gte: startDate, $lte: endDate },
+        },
+      },
+    ]);
+    console.log("Task count:", t.length);
+    const result = await Task.aggregate([
+      {
+        $match: {
+          completedAt: { $gte: startDate, $lte: endDate },
+          createdBy: { $in: userIds },
+        },
+      },
+      {
+        $group: {
+          _id: { userId: "$createdBy", date: { $dateToString: { format, date: "$completedAt" } } },
+          completedCount: { $count: {} },
+        },
+      },
+      // {
+      //   $group: {
+      //     _id: "$_id.userId",
+      //     tasks: {
+      //       $push: {
+      //         date: "$_id.date",
+      //         completedCount: "$completedCount",
+      //       },
+      //     },
+      //   },
+      // },
+    ]);
+
+    // await Task.deleteMany();
+    // const userIds = ["64f2b5381560dd93fc98208e", "64f2c581781717eaba1a5eb9", "64f4856c186ce900a0f536f2"];
+    // const statuses = ["completed", "in progress"];
+
+    // // Generate random date between 2020 and 2023
+    // function getRandomDate(start: Date, end: Date) {
+    //   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    // }
+
+    // // Generate 100 random tasks
+    // for (let i = 0; i < 100; i++) {
+    //   const task = new Task({
+    //     title: `Task ${i + 1}`,
+    //     description: `Description for Task ${i + 1}`,
+    //     status: statuses[Math.floor(Math.random() * statuses.length)],
+    //     createdBy: userIds[Math.floor(Math.random() * userIds.length)],
+    //     completedAt: getRandomDate(new Date("2020-01-01"), new Date("2023-12-31")),
+    //   });
+
+    //   task
+    //     .save()
+    //     .then(value => {
+    //       console.log(`Task saved successfully`, value);
+    //     })
+    //     .catch(err => {
+    //       console.error(err);
+    //     });
+    // }
+    return result;
   },
 };

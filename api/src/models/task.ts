@@ -15,6 +15,7 @@ const TaskSchema: Schema = new Schema(
     description: { type: String, required: true },
     status: { type: String, required: true, default: "pending" },
     createdBy: { type: String, required: true },
+    completedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

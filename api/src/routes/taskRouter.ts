@@ -6,6 +6,7 @@ import taskController from "../controllers/taskController";
 import { hasRole, isAuthenticated } from "../middleware/authMiddleware";
 import { Role } from "../models/user";
 import taskStatusService from "../services/taskStatusService";
+import { TimePeriod } from "../utils/date/timePeriod";
 
 const router = Router();
 
@@ -59,6 +60,24 @@ router.put(
   taskController.updateTask
 );
 
+router.get(
+  "/completed-task-metrics",
+  isAuthenticated,
+  hasRole(Role.Admin),
+  [
+    query("userIds").isArray().notEmpty().withMessage("User IDs is required"),
+    query("userIds.*").isMongoId().withMessage("Invalid user IDs provided"),
+    query("startDate").isString().withMessage("Start date must be an date"),
+    query("endDate").isString().withMessage("End date must be an date"),
+    query("timePeriod")
+      .isString()
+      .withMessage("Time period is required")
+      .isIn([TimePeriod.Year, TimePeriod.Month, TimePeriod.Week, TimePeriod.Day])
+      .withMessage("Invalid status provided"),
+  ],
+  handleValidationErrors,
+  taskController.completedTaskMetrics
+);
 router.get("/:id", isAuthenticated, hasRole(Role.Admin, Role.Employee), taskController.getTaskById);
 router.delete("/:id", isAuthenticated, hasRole(Role.Admin, Role.Employee), taskController.deleteTask);
 

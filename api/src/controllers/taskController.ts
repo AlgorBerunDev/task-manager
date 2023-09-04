@@ -4,6 +4,7 @@ import taskService, { SortDirection, TaskFilter } from "../services/taskService"
 import userService from "../services/userService";
 import { ITask } from "../models/task";
 import { taskSerializer, tasksSerializer } from "../serializers/taskSerializer";
+import { TimePeriod, TimePeriodValue } from "../utils/date/timePeriod";
 
 export default {
   getAllTasks: async (req: IRequestWithUser, res: Response) => {
@@ -72,6 +73,19 @@ export default {
         return;
       }
       res.json({ message: "Task deleted" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+  async completedTaskMetrics(req: IRequestWithUser, res: Response) {
+    try {
+      const userIds = req.query.userIds as unknown as string[];
+      const startDate = new Date(req.query.startDate as string);
+      const endDate = new Date(req.query.endDate as string);
+      const timePeriod = req.query.timePeriod as TimePeriodValue;
+
+      const completedTaskMetrics = await taskService.completedTaskMetrics({ userIds, startDate, endDate, timePeriod });
+      res.json(completedTaskMetrics);
     } catch (error) {
       res.status(500).json({ error });
     }

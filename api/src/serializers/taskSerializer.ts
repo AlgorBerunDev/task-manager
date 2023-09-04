@@ -6,8 +6,10 @@ interface SerializedTask {
   description: string;
   status: string;
   createdBy: string;
+  completedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  next: string | null;
 }
 
 export const taskSerializer = (task: ITask): SerializedTask => {
@@ -19,6 +21,8 @@ export const taskSerializer = (task: ITask): SerializedTask => {
     createdBy: task.createdBy,
     createdAt: task.createdAt,
     updatedAt: task.updatedAt,
+    completedAt: task.completedAt,
+    next: task.next,
   };
 };
 

@@ -5,8 +5,10 @@ export interface ITask extends Document {
   description: string;
   status: string;
   createdBy: string;
+  completedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  next: string | null;
 }
 
 const TaskSchema: Schema = new Schema(
@@ -16,6 +18,7 @@ const TaskSchema: Schema = new Schema(
     status: { type: String, required: true, default: "pending" },
     createdBy: { type: String, required: true },
     completedAt: { type: Date, default: null },
+    next: { type: String, default: null },
   },
   { timestamps: true }
 );

@@ -57,6 +57,23 @@ export default {
       .sort(sortOptions);
   },
 
+  async getTasksByUserCount(userId: string, filter: TaskFilter = {}, search: string = ""): Promise<number> {
+    const isAdmin = await userService.hasRole(userId, "Admin");
+    const query: any = isAdmin ? {} : { createdBy: userId };
+
+    for (const [key, value] of Object.entries(filter)) {
+      if (value) {
+        query[key] = value;
+      }
+    }
+
+    if (search) {
+      query["$or"] = [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }];
+    }
+
+    return await Task.count(query);
+  },
+
   async getTaskById(taskId: string): Promise<ITask | null> {
     return await Task.findById(taskId);
   },

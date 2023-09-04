@@ -20,7 +20,14 @@ export default {
       const search = req.query.search ? String(req.query.search) : "";
 
       const tasks = await taskService.getTasksByUser(userId, page, limit, sortBy, orderBy, filter, search);
-      res.json(tasksSerializer(tasks));
+      const count = await taskService.getTasksByUserCount(userId, filter, search);
+
+      res.json({
+        result: tasksSerializer(tasks),
+        meta: {
+          count,
+        },
+      });
     } catch (error) {
       res.status(500).json({ error });
     }

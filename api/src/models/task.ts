@@ -9,6 +9,7 @@ export interface ITask extends Document {
   createdAt: Date;
   updatedAt: Date;
   next: string | null;
+  prev: string | null;
 }
 
 const TaskSchema: Schema = new Schema(
@@ -19,6 +20,7 @@ const TaskSchema: Schema = new Schema(
     createdBy: { type: String, required: true },
     completedAt: { type: Date, default: null },
     next: { type: String, default: null },
+    prev: { type: String, default: null },
   },
   { timestamps: true }
 );

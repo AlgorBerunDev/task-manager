@@ -47,6 +47,28 @@ router.post(
   taskController.createTask
 );
 
+router.post(
+  "/move",
+  isAuthenticated,
+  [
+    body("id").isString().withMessage("ID must be an string"),
+    body("status")
+      .isString()
+      .withMessage("Status is required")
+      .custom(async (status: string) => {
+        const statuses = await taskStatusService.getTaskStatuses({ name: status });
+        const isExist = statuses.length > 0;
+
+        if (!isExist) return Promise.reject();
+      })
+      .withMessage("Invalid status provided"),
+    body("next").optional({ nullable: true }).isString().withMessage("Next task id be an string"),
+    body("prev").optional({ nullable: true }).isString().withMessage("Prev task id must be an string"),
+  ],
+  handleValidationErrors,
+  taskController.moveTask
+);
+
 router.put(
   "/:id",
   isAuthenticated,

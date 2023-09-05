@@ -10,6 +10,22 @@ export default {
   getAllTasks: async (req: IRequestWithUser, res: Response) => {
     try {
       const userId = req.user?.id;
+      const search = req.query.search ? String(req.query.search) : "";
+      const createdBy = req.query.createdBy ? String(req.query.createdBy) : null;
+
+      const tasks = await taskService.getAllTask(userId, createdBy, search);
+
+      res.json({
+        result: tasksSerializer(tasks),
+      });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  getAllTasksWithPagination: async (req: IRequestWithUser, res: Response) => {
+    try {
+      const userId = req.user?.id;
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
       const sortBy = (req.query.sortBy || "_id") as string;
@@ -51,8 +67,10 @@ export default {
     try {
       const userId = req.user?.id;
       const taskData = { ...req.body, createdBy: userId };
-      const task = await taskService.createTask(taskData);
-      res.status(201).json(taskSerializer(task));
+      const result = await taskService.createTask(taskData);
+      res
+        .status(201)
+        .json({ result: taskSerializer(result.savedTask), updatedTask: taskSerializer(result.updatedTask) });
     } catch (error) {
       res.status(500).json({ message: "Error creating task", error });
     }
@@ -84,6 +102,7 @@ export default {
       res.status(500).json({ error });
     }
   },
+
   async completedTaskMetrics(req: IRequestWithUser, res: Response) {
     try {
       const userIds = req.query.userIds as unknown as string[];
@@ -93,6 +112,20 @@ export default {
 
       const completedTaskMetrics = await taskService.completedTaskMetrics({ userIds, startDate, endDate, timePeriod });
       res.json(completedTaskMetrics);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  async moveTask(req: IRequestWithUser, res: Response) {
+    try {
+      const moveTaskId = req.body.id as string;
+      const status = req.body.status as string;
+      const prev = req.body.prev as string | null;
+      const next = req.body.next as string | null;
+
+      const updatedTasks = await taskService.moveTask(moveTaskId, status, prev, next);
+      res.json({ result: tasksSerializer(updatedTasks) });
     } catch (error) {
       res.status(500).json({ error });
     }

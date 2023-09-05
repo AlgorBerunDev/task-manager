@@ -33,7 +33,7 @@ const App = () => {
           <Route path="/login" render={() => <LoginPageContainer />} />
           <Route path="/register" render={() => <RegistrationPage onRegister={handleRegister} />} />
           <LayoutContainer user={user}>
-            <PrivateContainer path="/users" component={Users} allowRoles={["admin", "employee"]} />
+            <PrivateContainer path="/users" component={Users} allowRoles={["admin", "employee"]} exact />
             <PrivateContainer
               path="/users/:userId/completedTaskMetrics"
               component={CompletedTaskMetrics}

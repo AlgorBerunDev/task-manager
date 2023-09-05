@@ -19,9 +19,27 @@ interface ICompletedTaskMetricsFilter {
 }
 
 export default {
-  async createTask(taskData: ITask): Promise<ITask> {
-    const task = new Task(taskData);
-    return await task.save();
+  async createTask(taskData: ITask): Promise<{ savedTask: ITask; updatedTask: ITask | null }> {
+    const firstTask = await Task.findOne({ prev: null, status: taskData.status, createdBy: taskData.createdBy });
+    const task = new Task({ ...taskData, next: firstTask?._id.toString() });
+    const savedTask = await task.save();
+    const updatedFirstTask = await Task.findByIdAndUpdate(
+      firstTask?._id,
+      { prev: savedTask._id.toString() },
+      { new: true }
+    );
+    return { savedTask, updatedTask: updatedFirstTask };
+  },
+
+  async getAllTask(userId: string, createdBy?: string | null, search: string = "") {
+    const isAdmin = await userService.hasRole(userId, "Admin");
+    const query: any = createdBy ? { createdBy } : {};
+
+    if (search) {
+      query["$or"] = [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }];
+    }
+
+    return await Task.find(query);
   },
 
   async getTasksByUser(
@@ -86,6 +104,52 @@ export default {
     return await Task.findByIdAndDelete(taskId);
   },
 
+  async moveTask(
+    moveTaskId: string,
+    status: string,
+    newPrevTaskId: string | null,
+    newNextTaskId: string | null
+  ): Promise<ITask[]> {
+    const currentTask = await Task.findById(moveTaskId);
+
+    const updatedOldPrevTask = await Task.findByIdAndUpdate(
+      currentTask?.prev,
+      { next: currentTask?.next },
+      { new: true }
+    );
+    const updatedOldNextTask = await Task.findByIdAndUpdate(
+      currentTask?.next,
+      { prev: currentTask?.prev },
+      { new: true }
+    );
+    const updatedPrevTask = await Task.findByIdAndUpdate(newPrevTaskId, { next: moveTaskId }, { new: true });
+    const updatedNextTask = await Task.findByIdAndUpdate(newNextTaskId, { prev: moveTaskId }, { new: true });
+
+    const updatedCurrentTask = await Task.findByIdAndUpdate(
+      moveTaskId,
+      {
+        next: newNextTaskId || null,
+        prev: newPrevTaskId || null,
+        status,
+      },
+      { new: true }
+    );
+
+    const result = await Task.find({
+      _id: {
+        $in: [
+          updatedCurrentTask?._id.toString(),
+          updatedOldPrevTask?._id.toString(),
+          updatedOldNextTask?._id.toString(),
+          updatedPrevTask?._id.toString(),
+          updatedNextTask?._id.toString(),
+        ],
+      },
+    });
+
+    return result;
+  },
+
   async completedTaskMetrics({ userIds, startDate, endDate, timePeriod }: ICompletedTaskMetricsFilter) {
     const format = getFormatDateByTimePeriod(timePeriod);
     let t = await Task.aggregate([
@@ -121,35 +185,6 @@ export default {
       //   },
       // },
     ]);
-
-    // await Task.deleteMany();
-    // const userIds = ["64f2b5381560dd93fc98208e", "64f2c581781717eaba1a5eb9", "64f4856c186ce900a0f536f2"];
-    // const statuses = ["completed", "in progress"];
-
-    // // Generate random date between 2020 and 2023
-    // function getRandomDate(start: Date, end: Date) {
-    //   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    // }
-
-    // // Generate 100 random tasks
-    // for (let i = 0; i < 100; i++) {
-    //   const task = new Task({
-    //     title: `Task ${i + 1}`,
-    //     description: `Description for Task ${i + 1}`,
-    //     status: statuses[Math.floor(Math.random() * statuses.length)],
-    //     createdBy: userIds[Math.floor(Math.random() * userIds.length)],
-    //     completedAt: getRandomDate(new Date("2020-01-01"), new Date("2023-12-31")),
-    //   });
-
-    //   task
-    //     .save()
-    //     .then(value => {
-    //       console.log(`Task saved successfully`, value);
-    //     })
-    //     .catch(err => {
-    //       console.error(err);
-    //     });
-    // }
     return result;
   },
 };

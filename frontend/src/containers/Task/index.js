@@ -5,7 +5,7 @@ import TaskBoard from "./TaskBoard";
 import taskService from "../../services/taskService";
 import _ from "lodash";
 
-export default function TaskList({ createdBy = "64f4856c186ce900a0f536f2" }) {
+export default function TaskList({ createdBy = null }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 

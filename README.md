@@ -1,76 +1,15 @@
-Run build services
+Run commands
 
 ```
-docker-compose build
-```
+# If your OS unix system run this command
+echo '127.0.0.1 mohirdev-docker.local' >> /etc/hosts
 
-Run applications without building
+# If your OS Windows run this command
+notepad C:\Windows\System32\drivers\etc\hosts
+# And add the entry you want to the bottom of the file, in the format IP_ADDRESS DOMAIN_NAME. For example:
+127.0.0.1 mohirdev-docker.local
 
-```
-docker-compose up
-```
-
-Run applications in the background
-
-```
-docker-compose up -d
-```
-
-Run applications if Dockerfile updated first step build after run application
-
-```
-docker-compose up --build
-```
-
-All list docker images
-
-```
-docker images
-```
-
-Logs only one service
-
-```
-docker logs <service name>
-```
-
-List docker volumes
-
-```
-docker volume ls
-```
-
-Run development docker-compose
-
-```
 docker-compose -f docker-compose.yml -f docker-compose.development.yml up --build
 ```
 
-```
-docker ps
-```
-
-```
-docker exec -it <service-name> <command>
-docker exec -it realworld-docker-api echo "Foo"
-```
-
-```
-docker exec -it <service-name> sh
-docker exec -it realworld-docker-api sh
-```
-
-```
-docker network COMMAND
-docker network ls
-```
-
-Remove unused
-
-```
-docker system prune
-```
-
-```
-docker system
-```
+[Open browser and type http://mohirdev-docker.local/](http://mohirdev-docker.local/)

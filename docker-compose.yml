@@ -45,7 +45,7 @@ services:
     image: nginx:stable-alpine
     container_name: mohirdev-docker-nginx
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     depends_on:

@@ -1,7 +1,7 @@
 server {
   listen 80;
 
-  server_name mohirdev-docker.com;
+  server_name mohirdev.fibro.uz;
 
   location / {
     proxy_pass http://frontend:3000;

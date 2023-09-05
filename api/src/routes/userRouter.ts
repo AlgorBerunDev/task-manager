@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { isAuthenticated, hasRole, IRequestWithUser } from "../middleware/authMiddleware";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { userSerializer, usersSerializer } from "../serializers/userSerializer";
 
 const router = Router();

@@ -20,7 +20,7 @@ const kanbanService = {
       columns: sortedStatuses.map(status => {
         return {
           ...status,
-          cards: sortArrayByNextField(groupedTasks[status.name]),
+          cards: sortArrayByNextField(groupedTasks[status.name] || []),
         };
       }),
     };

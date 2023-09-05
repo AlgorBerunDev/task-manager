@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
-import { IUser, Role, User } from "../models/user";
+import { IUser, Role, User } from "../models/User";
 import { generateToken } from "../middleware/authMiddleware";
 import { handleValidationErrors } from "../utils/errorHandler";
 import { userSerializer } from "../serializers/userSerializer";

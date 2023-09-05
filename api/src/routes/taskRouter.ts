@@ -4,7 +4,7 @@ import { handleValidationErrors } from "../utils/errorHandler";
 import { SortDirection } from "../services/taskService";
 import taskController from "../controllers/taskController";
 import { hasRole, isAuthenticated } from "../middleware/authMiddleware";
-import { Role } from "../models/user";
+import { Role } from "../models/User";
 import taskStatusService from "../services/taskStatusService";
 import { TimePeriod } from "../utils/date/timePeriod";
 

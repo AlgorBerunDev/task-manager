@@ -1,4 +1,4 @@
-import { IUser, Role, User, UserRole } from "../models/user";
+import { IUser, Role, User, UserRole } from "../models/User";
 
 export default {
   async getUserRoles(userId: string): Promise<String[]> {

@@ -1,7 +1,7 @@
 // src/middleware/auth.ts
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { IUser, User } from "../models/user";
+import { IUser, User } from "../models/User";
 
 export interface IRequestWithUser extends Request {
   user?: IUser;

@@ -3,7 +3,7 @@ import { body, query } from "express-validator";
 import { handleValidationErrors } from "../utils/errorHandler";
 import { hasRole, isAuthenticated } from "../middleware/authMiddleware";
 import taskStatusController from "../controllers/taskStatusController";
-import { Role } from "../models/user";
+import { Role } from "../models/User";
 
 const router = Router();
 

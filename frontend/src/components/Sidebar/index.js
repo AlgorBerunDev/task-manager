@@ -19,13 +19,13 @@ const Sidebar = ({ user }) => {
         items={[
           {
             key: "/tasks",
-            title: <Link to="/tasks">Tasks List</Link>,
+            label: <Link to="/tasks">Tasks List</Link>,
           },
           ...(hasRole(user, ["admin"])
             ? [
                 {
                   key: "/users",
-                  title: <Link to="/users">Users</Link>,
+                  label: <Link to="/users">Users</Link>,
                 },
               ]
             : []),

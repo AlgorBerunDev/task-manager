@@ -14,4 +14,4 @@ docker-compose -f docker-compose.yml -f docker-compose.development.yml up --buil
 
 [Open browser and type http://mohirdev-docker.local/](http://mohirdev-docker.local/)
 
-[Click for view Live in browser https://mohirdev.fibro.uz](mohirdev.fibro.uz)
+[Click for view Live in browser https://mohirdev.fibro.uz](https://mohirdev.fibro.uz)

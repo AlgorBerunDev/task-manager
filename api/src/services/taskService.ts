@@ -143,8 +143,28 @@ export default {
     return updatedTasks;
   },
 
-  async deleteTask(taskId: string): Promise<ITask | null> {
-    return await Task.findByIdAndDelete(taskId);
+  async deleteTask(taskId: string): Promise<ITask[]> {
+    const currentTask = await Task.findById(taskId);
+
+    const updatedTasks = [];
+
+    if (currentTask?.prev) {
+      const updatePrevTask = (await Task.findByIdAndUpdate(currentTask?.prev, {
+        next: currentTask.next,
+      })) as unknown as ITask;
+      updatedTasks.push(updatePrevTask);
+    }
+
+    if (currentTask?.next) {
+      const updatedNextTask = (await Task.findByIdAndUpdate(currentTask?.next, {
+        prev: currentTask.prev,
+      })) as unknown as ITask;
+      updatedTasks.push(updatedNextTask);
+    }
+
+    await Task.findByIdAndDelete(taskId);
+
+    return updatedTasks;
   },
 
   async moveTask(

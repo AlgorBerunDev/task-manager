@@ -1,6 +1,6 @@
 import React from "react";
-import { Menu } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Button, Divider, Menu, Popconfirm } from "antd";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { hasRole } from "../../utils/role";
 import styled from "styled-components";
 
@@ -9,6 +9,12 @@ const MenuPadding = styled.div`
 `;
 const Sidebar = ({ user }) => {
   const location = useLocation();
+  const history = useHistory();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    history.push("/login");
+  };
 
   return (
     <MenuPadding>
@@ -33,6 +39,15 @@ const Sidebar = ({ user }) => {
                 },
               ]
             : []),
+          {
+            type: "divider",
+          },
+          {
+            key: "logout",
+            danger: true,
+            label: "Logout",
+            onClick: handleLogout,
+          },
         ]}
       />
     </MenuPadding>

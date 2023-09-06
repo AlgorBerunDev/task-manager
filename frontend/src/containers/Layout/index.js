@@ -18,6 +18,7 @@ const LayoutMainContent = styled.div`
 `;
 
 const Layout = styled.div`
+  margin-top: 70px;
   display: flex;
   width: 100%;
 `;

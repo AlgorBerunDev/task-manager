@@ -35,6 +35,8 @@ export default {
     const isAdmin = await userService.hasRole(userId, "Admin");
     const query: any = createdBy ? { createdBy } : {};
 
+    if (!isAdmin) query["createdBy"] = userId;
+
     if (search) {
       query["$or"] = [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }];
     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button, Form, Select } from "antd";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -12,12 +13,14 @@ const RegisterLayout = styled.div`
 `;
 
 const RegistrationPage = ({ onRegister }) => {
+  const history = useHistory();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
   const handleSubmit = () => {
     onRegister(username, password, role);
+    history.push("/tasks");
   };
 
   return (

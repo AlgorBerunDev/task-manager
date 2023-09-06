@@ -12,6 +12,7 @@ import axios from "axios";
 import GlobalProvider from "./providers/GlobalProvider";
 import LoginPageContainer from "./containers/LoginPageContainer";
 import PrivateContainer from "./containers/PrivateContainer";
+import TaskCreatePage from "./pages/TaskCreatePage";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -40,7 +41,13 @@ const App = () => {
               allowRoles={["admin", "employee"]}
             />
             <PrivateContainer path="/tasks" component={Tasks} exact allowRoles={["admin", "employee"]} />
-            <PrivateContainer path="/tasks/:taskId" component={TaskDetails} allowRoles={["admin", "employee"]} />
+            <PrivateContainer
+              path="/tasks/create"
+              component={TaskCreatePage}
+              exact
+              allowRoles={["admin", "employee"]}
+            />
+            <PrivateContainer path="/tasks/update/:taskId" component={TaskDetails} allowRoles={["admin", "employee"]} />
           </LayoutContainer>
         </Switch>
       </GlobalProvider>

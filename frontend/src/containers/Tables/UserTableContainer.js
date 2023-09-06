@@ -24,7 +24,7 @@ const userDataColumns = [
         <Space size={[0, 8]}>
           {roles.map(role => (
             <Tag color={colorByRole[role]} key={role}>
-              role
+              {role}
             </Tag>
           ))}
         </Space>

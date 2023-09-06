@@ -93,12 +93,9 @@ export default {
 
   deleteTask: async (req: IRequestWithUser, res: Response) => {
     try {
-      const task = await taskService.deleteTask(req.params.id);
-      if (!task) {
-        res.status(404).json({ message: "Task not found" });
-        return;
-      }
-      res.json({ message: "Task deleted" });
+      const updatedTasks = await taskService.deleteTask(req.params.id);
+
+      res.json(updatedTasks);
     } catch (error) {
       res.status(500).json({ error });
     }

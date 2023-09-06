@@ -29,7 +29,9 @@ const board = {
       return { ...state, tasks: _.unionBy(tasks, state.tasks, "id") };
     },
     updateTasksReducer(state, data) {},
-    removeTaskReducer(state, data) {},
+    removeTaskReducer(state, taskId) {
+      return { ...state, tasks: state.tasks.filter(task => task.id !== taskId) };
+    },
   },
   effects: dispatch => ({
     async fetchBoard({ createdBy = null, search = "" } = {}) {
@@ -59,6 +61,15 @@ const board = {
       });
 
       dispatch.board.unionTasksReducer(updatedTasks);
+      dispatch.board.setStatusSavingTask(false);
+    },
+    async removeTask(id) {
+      dispatch.board.setStatusSavingTask(true);
+
+      const updatedTasks = await taskService.removeTask(id);
+
+      dispatch.board.unionTasksReducer(updatedTasks);
+      dispatch.board.removeTaskReducer(id);
       dispatch.board.setStatusSavingTask(false);
     },
     async moveTask({ id, status, next, prev }) {

@@ -45,9 +45,9 @@ const taskService = {
   },
 
   async removeTask(id) {
-    const { status } = await http.delete("/tasks/" + id);
-    if (status === 200) return true;
-    return false;
+    const { data: updatedTasks } = await http.delete("/tasks/" + id);
+
+    return updatedTasks;
   },
 
   async moveTask({ id, status, next, prev }) {

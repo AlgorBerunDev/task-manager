@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, Popconfirm, Select, Space } from "antd";
 import { sortArrayByNextField } from "../../utils/sort";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,17 @@ const TaskUpdate = () => {
   const { tasks, statuses, isBoardInit, isSavingTask } = useSelector(state => state.board);
 
   const {
-    board: { updateTask, fetchBoard },
+    board: { updateTask, fetchBoard, removeTask },
   } = useDispatch();
 
   const onFinish = values => {
     updateTask({ ...values, id: taskId }).then(() => {
+      history.push("/tasks");
+    });
+  };
+
+  const handleDelete = () => {
+    removeTask(taskId).then(() => {
       history.push("/tasks");
     });
   };
@@ -59,9 +65,20 @@ const TaskUpdate = () => {
         />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={isSavingTask}>
-          Create
-        </Button>
+        <Space split>
+          <Button type="primary" htmlType="submit" loading={isSavingTask}>
+            Create
+          </Button>
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={handleDelete}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
+        </Space>
       </Form.Item>
     </Form>
   );

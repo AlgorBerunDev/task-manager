@@ -1,33 +1,23 @@
-import React, { useEffect, useState } from "react";
-import KanbanComponent from "../../components/Kanban";
-import kanbanService from "../../services/kanbanService";
+import React, { useEffect } from "react";
 import TaskBoard from "./TaskBoard";
-import taskService from "../../services/taskService";
 import _ from "lodash";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function TaskList({ createdBy = null }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, isBoardInit, tasks, statuses } = useSelector(state => state.board);
+  const {
+    board: { fetchBoard, moveTask },
+  } = useDispatch();
 
   useEffect(() => {
-    setLoading(true);
-    kanbanService.fetchData({ createdBy }).then(({ tasks, statuses }) => {
-      setData({ tasks, statuses });
-      setLoading(false);
-    });
+    fetchBoard({ createdBy });
   }, []);
 
   const handleMove = ({ id, status, prev, next }) => {
-    kanbanService.moveTask({ id, status, prev, next }).then(updatedTasks => {
-      setData({ ...data, tasks: [..._.unionBy(updatedTasks, data.tasks, "id")] });
-    });
+    moveTask({ id, status, prev, next });
   };
 
-  useEffect(() => {
-    console.table(data?.tasks.map(task => ({ id: task.id, title: task.title, next: task.next, prev: task.prev })));
-  }, [data?.tasks]);
+  if (loading || !isBoardInit) return <div>Loading...</div>;
 
-  if (loading || data === null) return <div>Loading...</div>;
-
-  return <TaskBoard taskList={data.tasks} columnList={data.statuses} move={handleMove} />;
+  return <TaskBoard taskList={tasks} columnList={statuses} move={handleMove} />;
 }

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Sidebar from "../../components/Sidebar";
 import GlobalContext from "../../providers/GlobalContext";
+import Container from "../../components/Container";
 
 const LayoutSidebar = styled.div`
   height: 100vh;
@@ -27,13 +28,15 @@ export default function LayoutContainer({ children }) {
   } = useContext(GlobalContext);
 
   return (
-    <Layout>
-      {user && (
-        <LayoutSidebar>
-          <Sidebar user={user} />
-        </LayoutSidebar>
-      )}
-      <LayoutMainContent>{children}</LayoutMainContent>
-    </Layout>
+    <Container>
+      <Layout>
+        {user && (
+          <LayoutSidebar>
+            <Sidebar user={user} />
+          </LayoutSidebar>
+        )}
+        <LayoutMainContent>{children}</LayoutMainContent>
+      </Layout>
+    </Container>
   );
 }

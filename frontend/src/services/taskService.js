@@ -20,10 +20,11 @@ const taskService = {
   },
 
   async fetchAllTasks({ createdBy = null, search = "" }) {
-    const searchParams = new URLSearchParams({
-      createdBy,
-      search,
-    }).toString();
+    const query = {};
+    if (createdBy) query["createdBy"] = createdBy;
+    if (search) query["search"] = search;
+
+    const searchParams = new URLSearchParams(query).toString();
 
     const {
       data: { result },
@@ -33,9 +34,7 @@ const taskService = {
   },
 
   async createTask({ title, description, status }) {
-    const {
-      response: { data },
-    } = await http.post("/tasks", { title, description, status });
+    const { data } = await http.post("/tasks", { title, description, status });
     return data;
   },
 

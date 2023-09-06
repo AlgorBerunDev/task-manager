@@ -21,6 +21,10 @@ const Sidebar = ({ user }) => {
             key: "/tasks",
             label: <Link to="/tasks">Tasks List</Link>,
           },
+          {
+            key: "/tasks/create",
+            label: <Link to="/tasks/create">Task Create</Link>,
+          },
           ...(hasRole(user, ["admin"])
             ? [
                 {

@@ -39,9 +39,7 @@ const taskService = {
   },
 
   async updateTask(id, { title, description, status }) {
-    const {
-      response: { data },
-    } = await http.put("/tasks/" + id, { title, description, status });
+    const { data } = await http.put("/tasks/" + id, { title, description, status });
 
     return data;
   },

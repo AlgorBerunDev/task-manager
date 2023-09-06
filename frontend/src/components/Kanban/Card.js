@@ -3,7 +3,7 @@ import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 const { Title, Paragraph } = Typography;
-function Card({ card, index }) {
+function Card({ card, index, onClick }) {
   return (
     <Draggable draggableId={card.id} index={index}>
       {provided => (
@@ -21,6 +21,7 @@ function Card({ card, index }) {
             borderRadius: "4px",
             ...provided.draggableProps.style,
           }}
+          onClick={() => onClick(card)}
         >
           <Title level={5} style={{ margin: 0 }}>
             {card.title}

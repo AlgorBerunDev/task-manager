@@ -50,6 +50,17 @@ const board = {
       dispatch.board.unionTasksReducer([result, updatedTask]);
       dispatch.board.setStatusSavingTask(false);
     },
+    async updateTask({ id, title, description, status }) {
+      dispatch.board.setStatusSavingTask(true);
+      const updatedTasks = await taskService.updateTask(id, {
+        title,
+        description,
+        status,
+      });
+
+      dispatch.board.unionTasksReducer(updatedTasks);
+      dispatch.board.setStatusSavingTask(false);
+    },
     async moveTask({ id, status, next, prev }) {
       const tasks = await taskService.moveTask({ id, status, next, prev });
       dispatch.board.unionTasksReducer(tasks);

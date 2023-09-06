@@ -96,8 +96,51 @@ export default {
     return await Task.findById(taskId);
   },
 
-  async updateTask(taskId: string, taskData: Partial<ITask>): Promise<ITask | null> {
-    return await Task.findByIdAndUpdate(taskId, taskData, { new: false });
+  async updateTask(taskId: string, taskData: Partial<ITask>): Promise<ITask[]> {
+    const currentTask = await Task.findById(taskId);
+
+    if (currentTask?.status === taskData.status) {
+      const result = (await Task.findByIdAndUpdate(taskId, taskData, { new: false })) as unknown as ITask;
+      return [result];
+    }
+
+    const updatedTasks = [];
+
+    if (currentTask?.prev) {
+      const updatePrevTask = (await Task.findByIdAndUpdate(currentTask?.prev, {
+        next: currentTask.next,
+      })) as unknown as ITask;
+      updatedTasks.push(updatePrevTask);
+    }
+
+    if (currentTask?.next) {
+      const updatedNextTask = (await Task.findByIdAndUpdate(currentTask?.next, {
+        prev: currentTask.prev,
+      })) as unknown as ITask;
+      updatedTasks.push(updatedNextTask);
+    }
+
+    const currentFirstTask = await Task.findOne({ prev: null, status: taskData.status });
+    if (currentFirstTask) {
+      const updatedFirstTask = (await Task.findByIdAndUpdate(
+        currentFirstTask._id.toString(),
+        {
+          prev: currentTask?._id.toString(),
+        },
+        { new: true }
+      )) as unknown as ITask;
+      updatedTasks.push(updatedFirstTask);
+    }
+
+    const updatedCurrentTask = (await Task.findByIdAndUpdate(currentTask?._id.toString(), {
+      ...taskData,
+      prev: null,
+      next: currentFirstTask?._id.toString() || null,
+    })) as unknown as ITask;
+
+    updatedTasks.push(updatedCurrentTask);
+
+    return updatedTasks;
   },
 
   async deleteTask(taskId: string): Promise<ITask | null> {

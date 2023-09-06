@@ -78,13 +78,14 @@ export default {
 
   updateTask: async (req: IRequestWithUser, res: Response) => {
     try {
-      const task: ITask | null = await taskService.updateTask(req.params.id, req.body);
+      const updatedTasks: ITask[] = await taskService.updateTask(req.params.id, req.body);
 
-      if (!task) {
+      if (!updatedTasks) {
         res.status(404).json({ message: "Task not found" });
         return;
       }
-      res.json(taskSerializer(task));
+
+      res.json(tasksSerializer(updatedTasks));
     } catch (error) {
       res.status(500).json({ error });
     }

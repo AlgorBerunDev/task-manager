@@ -18,7 +18,5 @@ export default function TaskBoard({ taskList, columnList, move, onClickCard }) {
     });
   };
 
-  return (
-    <KanbanComponent data={data} onClickCard={card => console.log("Clicked card", card)} moveTask={handleMoveTask} />
-  );
+  return <KanbanComponent data={data} onClickCard={onClickCard} moveTask={handleMoveTask} />;
 }

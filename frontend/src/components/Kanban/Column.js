@@ -24,9 +24,7 @@ function Column({ column, onClickCard }) {
         {provided => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             {column.cards.length > 0 ? (
-              column.cards.map((card, index) => (
-                <Card key={card.id} card={card} index={index} onClick={() => onClickCard(card)} />
-              ))
+              column.cards.map((card, index) => <Card key={card.id} card={card} index={index} onClick={onClickCard} />)
             ) : (
               <div className="empty-card"></div>
             )}

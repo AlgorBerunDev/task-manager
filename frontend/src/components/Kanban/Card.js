@@ -1,6 +1,8 @@
+import { Typography } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
+const { Title, Paragraph } = Typography;
 function Card({ card, index }) {
   return (
     <Draggable draggableId={card.id} index={index}>
@@ -20,7 +22,17 @@ function Card({ card, index }) {
             ...provided.draggableProps.style,
           }}
         >
-          {card.title}
+          <Title level={5} style={{ margin: 0 }}>
+            {card.title}
+          </Title>
+          <Paragraph
+            ellipsis={{
+              rows: 4,
+              expandable: false,
+            }}
+          >
+            {card.description}
+          </Paragraph>
         </div>
       )}
     </Draggable>

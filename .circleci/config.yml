@@ -3,44 +3,30 @@ orbs:
   node: circleci/node@5.1.0
 
 jobs:
+  tests:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run: cd api && npm install && npm test
+      - run: cd frontend && npm install && npm test
+
   build:
     docker:
-      - image: cimg/node:16.20
+      - image: circleci/node:14
     steps:
       - checkout
       - run:
-          name: Pwd 2
-          command: pwd
-      - node/install-packages
+          name: Build api
+          command: cd api && npm install && npm build
       - run:
-          name: Run tests
-          command: npm test
-      - run:
-          name: Node version
-          command: node --version
-      - run:
-          name: Pwd 1
-          command: pwd
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-      - run:
-          name: Pwd 1
-          command: pwd
+          name: Build frontend
+          command: cd frontend && npm install && npm build
 
   deploy:
     executor:
       name: node/default
     steps:
-      - run:
-          name: Print path 1
-          command: pwd
-      - attach_workspace:
-          at: .
-      - run:
-          name: Print path 2
-          command: pwd
       - add_ssh_keys:
           fingerprints:
             - "42:8f:33:18:b5:6b:94:aa:f7:5b:ee:0d:b2:67:af:75"
@@ -54,6 +40,7 @@ workflows:
   version: 2
   build-deploy:
     jobs:
+      - tests
       - build
       - deploy:
           requires:

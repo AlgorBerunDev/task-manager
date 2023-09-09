@@ -1,0 +1,55 @@
+version: 2.1
+orbs:
+  node: circleci/node@5.1.0
+
+jobs:
+  tests:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run: cd api && npm install && npm test
+      - run: cd frontend && npm install && npm test
+
+  build:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Build api
+          command: cd api && npm install && npm build
+      - run:
+          name: Build frontend
+          command: cd frontend && npm install && npm build
+
+
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "2e:f4:20:37:f5:e5:39:0b:89:5b:b3:25:cc:60:00:92"
+      - run:
+          name: Deploy to development server
+          command: |
+            ssh $DEPLOY_USER@$DEPLOY_HOST -o StrictHostKeyChecking=no "cd $DEPLOY_PATH && git pull"
+
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - tests
+      - build:
+          requires:
+            - tests
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - circleci-project-setup

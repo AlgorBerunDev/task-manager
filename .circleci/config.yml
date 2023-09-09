@@ -49,6 +49,7 @@ jobs:
           command: |
             ssh $DEPLOY_USER@$DEPLOY_HOST -o StrictHostKeyChecking=no "cd $DEPLOY_PATH && git pull"
 
+
 workflows:
   version: 2
   build-deploy:

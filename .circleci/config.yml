@@ -23,6 +23,7 @@ jobs:
           name: Build frontend
           command: cd frontend && npm install && npm build
 
+
   deploy:
     executor:
       name: node/default

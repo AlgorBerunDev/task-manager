@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "test": "echo \"Echo test\" && exit 0"
   },
   "keywords": [],
   "author": "",

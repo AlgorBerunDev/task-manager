@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Pwd 2
-          command: cd ./api
+          command: pwd
       - node/install-packages
       - run:
           name: Run tests

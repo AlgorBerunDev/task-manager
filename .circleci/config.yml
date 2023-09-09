@@ -29,7 +29,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "42:8f:33:18:b5:6b:94:aa:f7:5b:ee:0d:b2:67:af:75"
+            - "2e:f4:20:37:f5:e5:39:0b:89:5b:b3:25:cc:60:00:92"
       - run:
           name: Deploy to development server
           command: |
